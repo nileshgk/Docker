@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # Deploying Multi-Tier Application Using Docker Compose
 
@@ -189,3 +190,7 @@ and remove any other resources you created.
 - Restrict CORS to the frontend origin in production.
 - Use HTTPS and proper secret management for production.
 - Avoid exposing the backend API publicly unless required.
+=======
+# Docker
+Docker related mini projects
+>>>>>>> 140b806cea5f7fc8a4f0b550e81c327ee382d24c
