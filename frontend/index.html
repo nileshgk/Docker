@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Tier Docker Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f5f9;
+            margin: 0;
+            padding: 40px 15px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: #1d3557;
+        }
+
+        input, button {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input {
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #1d3557;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #457b9d;
+        }
+
+        #status {
+            margin-top: 15px;
+            color: #333;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Multi-Tier Application</h1>
+        <p>Frontend: Nginx | Backend: Python API | Database: MySQL</p>
+
+        <h3>Save a message</h3>
+        <input type="text" id="message" placeholder="Enter your message">
+        <button onclick="saveMessage()">Save Message</button>
+
+        <h3>Saved messages</h3>
+        <button onclick="loadMessages()">Refresh Messages</button>
+
+        <ul id="messages"></ul>
+        <p id="status">Application is ready.</p>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        async function saveMessage() {
+            const message = document.getElementById("message").value.trim();
+            const status = document.getElementById("status");
+
+            if (!message) {
+                status.textContent = "Please enter a message.";
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/messages`, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({message})
+                });
+
+                if (!response.ok) {
+                    throw new Error("Unable to save message.");
+                }
+
+                document.getElementById("message").value = "";
+                status.textContent = "Message saved successfully!";
+                await loadMessages();
+            } catch (error) {
+                status.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function loadMessages() {
+            const status = document.getElementById("status");
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/messages`);
+
+                if (!response.ok) {
+                    throw new Error("Unable to retrieve messages.");
+                }
+
+                const data = await response.json();
+                const list = document.getElementById("messages");
+                list.innerHTML = "";
+
+                data.messages.forEach(item => {
+                    const li = document.createElement("li");
+                    li.textContent = item.message;
+                    list.appendChild(li);
+                });
+
+                status.textContent = "Messages loaded successfully.";
+            } catch (error) {
+                status.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        loadMessages();
+    </script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+
+const API_BASE_URL = "http://YOUR_EC2_PUBLIC_IP:5000";
